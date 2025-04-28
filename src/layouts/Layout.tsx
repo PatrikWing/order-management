@@ -1,10 +1,4 @@
-import {
-  Container,
-  Box,
-  Toolbar,
-  useTheme,
-  useMediaQuery,
-} from "@mui/material";
+import { Container, Toolbar, useTheme, useMediaQuery } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { AppBar } from "./components/AppBar";
 import { Background } from "./components/Background";
@@ -23,11 +17,12 @@ const Layout = () => {
           </Toolbar>
         </Container>
       </AppBar>
-      <Box component="main" sx={{ flex: 1, p: 2 }}>
-        <Container maxWidth={isMobile ? "sm" : "lg"} sx={{ pt: 10 }}>
-          <Outlet />
-        </Container>
-      </Box>
+      <Container
+        maxWidth={isMobile ? "sm" : "lg"}
+        sx={{ pt: 10, pb: 2, height: "100%" }}
+      >
+        <Outlet />
+      </Container>
     </Background>
   );
 };

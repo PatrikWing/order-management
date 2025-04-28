@@ -20,6 +20,8 @@
     "notistack": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.56.1",
+    "react-hook-form-mui": "^7.6.0",
     "react-router-dom": "^6.22.0"
   },
   "devDependencies": {

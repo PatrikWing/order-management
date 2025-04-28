@@ -1,22 +1,41 @@
-# Patrik Wingqvist, 2025-04-27
+# Patrik Wingqvist, 2025-04-29
+
+### Install dependencies
+
+```console
+$ yarn install
+```
+
+### Run
+
+```console
+$ yarn start
+```
+
+### Build
+
+```console
+$ yarn build
+```
 
 ## Implementation details
+
+### Assumptions
+
+- This is an application primarily for back-office or front-office users.
+- The intended user uses a desktop or a tablet.
+
+### Time constraints
+
+- No internationalization.
+- No tests.
+- Other things.
 
 ### Technology
 
 - React
 - Vite
 - Typescript
-- Material UI for quality components
+- Material UI for production-ready components
 - React query for api state management
-
-### Assumptions
-
-- This is an application for back-office or front-office users
-- The primary user uses a desktop
-
-## Time constraints
-
-- Only the orders page was implemented, and without all actions
-- No internationalization
-- No alternative view for mobile devices, such as displaying the orders as cards rather than in a grid
+- React-hook-form for maintainable forms

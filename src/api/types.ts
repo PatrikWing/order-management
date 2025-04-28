@@ -25,3 +25,18 @@ export interface Instrument {
   ticker: string;
   name: string;
 }
+
+export interface CreateNewOrderInput {
+  instrumentId: Instrument["id"];
+  amount: number;
+  price: number;
+  action: OrderActionType;
+}
+
+export interface EditOrderInput {
+  id: Order["id"];
+  instrumentId: Instrument["id"];
+  amount: number;
+  price: number;
+  action: OrderActionType;
+}

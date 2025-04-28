@@ -9,25 +9,21 @@ export const useGetInstruments = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getInstruments = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/instruments`);
-      if (!response.ok) {
-        throw new Error(GET_INSTRUMENT_ERROR_MESSAGE);
-      }
-      return response.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        enqueueSnackbar(error.message, {
-          variant: "error",
-        });
-      }
-      return [];
+    const response = await fetch(`/api/instruments`);
+    if (!response.ok) {
+      throw new Error(GET_INSTRUMENT_ERROR_MESSAGE);
     }
-  }, [enqueueSnackbar]);
+    return response.json();
+  }, []);
 
   return useQuery<InstrumentsResponse, Error>({
     queryKey: [QueryKeys.Instruments],
     queryFn: () => getInstruments(),
     refetchOnWindowFocus: false,
+    onError: (error) => {
+      enqueueSnackbar(error.message, {
+        variant: "error",
+      });
+    },
   });
 };

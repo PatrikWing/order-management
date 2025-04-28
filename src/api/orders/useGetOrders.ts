@@ -5,29 +5,26 @@ import { OrdersResponse } from "../types";
 import { GET_ORDER_ERROR_MESSAGE } from "../constants";
 import { useCallback } from "react";
 
-export const useGetOrders = () => {
+export const useGetOrders = (enabled: boolean = true) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const getOrders = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/orders`);
-      if (!response.ok) {
-        throw new Error(GET_ORDER_ERROR_MESSAGE);
-      }
-      return response.json();
-    } catch (error) {
-      if (error instanceof Error) {
-        enqueueSnackbar(error.message, {
-          variant: "error",
-        });
-      }
-      return [];
+    const response = await fetch(`/api/orders`);
+    if (!response.ok) {
+      throw new Error(GET_ORDER_ERROR_MESSAGE);
     }
-  }, [enqueueSnackbar]);
+    return response.json();
+  }, []);
 
   return useQuery<OrdersResponse, Error>({
+    enabled,
     queryKey: [QueryKeys.Orders],
     queryFn: () => getOrders(),
     refetchOnWindowFocus: false,
+    onError: (error) => {
+      enqueueSnackbar(error.message, {
+        variant: "error",
+      });
+    },
   });
 };

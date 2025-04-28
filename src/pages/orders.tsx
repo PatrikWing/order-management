@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import {
   DataGrid,
   GridColDef,
+  GridRenderCellParams,
   GridRowSelectionModel,
   Toolbar,
 } from "@mui/x-data-grid";
@@ -16,14 +17,17 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Stack,
   Tooltip,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { Delete, Refresh, Visibility } from "@mui/icons-material";
+import { Add, Delete, Edit, Refresh, Visibility } from "@mui/icons-material";
 import { useDeleteOrders } from "../api/orders/useDeleteOrders";
+import { useNavigate } from "react-router-dom";
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [
     showDeleteOrderConfirmationDialog,
     setShowDeleteOrderConfirmationDialog,
@@ -40,7 +44,7 @@ const Orders = () => {
     isLoading: isLoadingInstruments,
   } = useGetInstruments();
   /**
-   * Map to easily lookup instruments by id.
+   * Map to lookup instruments by id.
    */
   const instrumentsMap = useMemo(() => {
     return instruments?.items?.reduce((acc, instrument) => {
@@ -74,6 +78,7 @@ const Orders = () => {
       instrumentName: instrumentsMap?.[order.instrumentId]?.name,
       amount: order.amount,
       price: order.price,
+      tradeAmount: (order.amount ?? 0) * (order.price ?? 0),
       action: order.action,
       updatedAt: order.updatedAt
         ? new Date(order.updatedAt).toLocaleString()
@@ -84,13 +89,32 @@ const Orders = () => {
     }));
   }, [sortedOrders, instrumentsMap]);
 
-  const ActionsCell = () => {
+  const ActionsCell = (
+    params: GridRenderCellParams<{
+      id: number;
+      instrumentTicker: string;
+      instrumentName: string;
+      amount: number;
+      price: number;
+      tradeAmount: number;
+      action: string;
+      updatedAt: string;
+      createdAt: string;
+    }>
+  ) => {
     return (
-      <Tooltip title="View order">
-        <IconButton onClick={() => alert("Not implemented")} color="info">
-          <Visibility />
-        </IconButton>
-      </Tooltip>
+      <Stack direction="row" gap={1}>
+        <Tooltip title="View order">
+          <IconButton onClick={() => alert("Not implemented")}>
+            <Visibility />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Edit order">
+          <IconButton onClick={() => navigate(`/orders/${params.row.id}/edit`)}>
+            <Edit />
+          </IconButton>
+        </Tooltip>
+      </Stack>
     );
   };
 
@@ -102,7 +126,6 @@ const Orders = () => {
     { field: "action", headerName: "Action", flex: 1 },
     { field: "updatedAt", headerName: "Updated at", flex: 1 },
     { field: "createdAt", headerName: "Created at", flex: 1 },
-    //add a column for the actions
     {
       field: "actions",
       headerName: "Actions",
@@ -112,8 +135,7 @@ const Orders = () => {
 
   const mobileColumns: GridColDef[] = [
     { field: "instrumentName", headerName: "Name", flex: 1 },
-    { field: "amount", headerName: "Amount", flex: 1 },
-    { field: "price", headerName: "Price", flex: 1 },
+    { field: "tradeAmount", headerName: "Trade amount", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
@@ -172,7 +194,17 @@ const Orders = () => {
     isRefetching;
 
   return (
-    <>
+    <Stack height="100%" gap={2}>
+      <Button
+        sx={{ alignSelf: "flex-end" }}
+        variant="outlined"
+        color="primary"
+        startIcon={<Add />}
+        onClick={() => navigate("/orders/new")}
+      >
+        Create new order
+      </Button>
+
       <DataGrid
         slots={{
           toolbar: () => (
@@ -204,9 +236,6 @@ const Orders = () => {
         }}
         showToolbar={true}
         checkboxSelection={true}
-        sx={{
-          height: "80vh",
-        }}
         columns={isMobile ? mobileColumns : desktopColumns}
         rows={rows}
         loading={isGridLoading}
@@ -217,7 +246,7 @@ const Orders = () => {
         onRowSelectionModelChange={setRowSelectionModel}
       />
       <DeleteOrderConfirmationDialog />
-    </>
+    </Stack>
   );
 };
 
